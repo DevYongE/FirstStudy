@@ -35,7 +35,7 @@ public class FileDown {
         getConnection();
         List<Map<String, String>> resultList = new ArrayList<>();
         System.out.println("[ 첨부파일 다운로드를 시작 합니다. ]");
-        resultList = getFileUrl();
+        resultList = getFileUrl(TYPE1);
         String serverPath = "scrapystore";
         String dbSavePath = "share_files/kms";
         System.out.println("[ "+resultList.size()+" 첨부파일 ROW 수 ]");
@@ -92,7 +92,7 @@ public class FileDown {
 
 
                    // System.out.println("c:\\"+finalRealPath);
-                    insertAttFile(CONTS_SEQ, "",SOURCENAME, file_seq, 0, originFile, finalPath, CRWL_URL, file_seq, SITE_CODE,REG_DATE );
+                    insertAttFile(CONTS_SEQ, TYPE1, SOURCENAME, file_seq, 0, originFile, finalPath, CRWL_URL, file_seq, SITE_CODE,REG_DATE );
                     //insertAttFile(CONTS_SEQ,String SITENAME, String SOURCENAME, int FILE_SEQ_DQ, int LOG_SEQ, String FILE_NAME, String FILE_PATH, String CRWL_URL, int UID, String SITE_CODE, String REG_DATE)
 
                     System.out.println(FILEURL_ARRAY[j]);
@@ -143,7 +143,7 @@ public class FileDown {
 
         try {
             DBuser = "postgres";
-            DBpw = "koiha123";
+            DBpw = "1234";
             DBurl = "jdbc:postgresql://127.0.0.1/postgres";
             Class.forName("org.postgresql.Driver");
             conn = DriverManager.getConnection(DBurl, DBuser, DBpw);
@@ -155,20 +155,22 @@ public class FileDown {
         }
         return conn;
     }
-    public static List<Map<String, String>> getFileUrl(){
+    public static List<Map<String, String>> getFileUrl(String TYPE2){
         List<Map<String, String>> resultList = new ArrayList<Map<String, String>>();
         String SELECT_SQL = "";
         try{
             stmt = conn.createStatement();
             SELECT_SQL =
-                    "SELECT UNIQUE_ID, CONTS_SEQ, CRWL_URL, SOURCENAME, FILE_SEQ, FILE_NAME, FILE_URL, REG_DATE, SITE_CODE FROM DQ_CRWL"
-                            + " WHERE FILE_URL IS NOT NULL  AND FILE_NAME IS NOT NULL AND FILE_SEQ  NOT IN (SELECT FILE_SEQ FROM TBL_FILE)";
+                    "SELECT UNIQUE_ID, BBS_ID ,CONTS_SEQ, CRWL_URL, SOURCENAME, FILE_SEQ, FILE_NAME, FILE_URL, REG_DATE, SITE_CODE FROM DQ_CRWL"
+                            + " WHERE FILE_URL IS NOT NULL  AND FILE_NAME IS NOT NULL AND FILE_SEQ  NOT IN (SELECT FILE_SEQ FROM TBL_FILE) " +
+                            "AND BBS_ID ="+TYPE2;
 
             ResultSet rs = stmt.executeQuery(SELECT_SQL);
             while(rs.next()){
                 Map<String, String> resultMap= new HashMap();
                 resultMap.put("CONTS_SEQ", rs.getString("CONTS_SEQ"));
                 resultMap.put("CRWL_URL", rs.getString("CRWL_URL"));
+                resultMap.put("BBS_ID", rs.getString("BBS_ID"));
                 resultMap.put("SOURCENAME", rs.getString("SOURCENAME"));
                 resultMap.put("FILE_SEQ", rs.getString("FILE_SEQ"));
                 resultMap.put("FILE_NAME", rs.getString("FILE_NAME"));
@@ -311,7 +313,7 @@ public class FileDown {
         }
         return fileName;
     }
-    public static int insertAttFile(long SEQ,String SITENAME, String SOURCENAME, int FILE_SEQ_DQ, int LOG_SEQ, String FILE_NAME, String FILE_PATH, String CRWL_URL, int UID, int SITE_CODE,  String REG_DATE)    {
+    public static int insertAttFile(long SEQ,String BBS_ID, String SOURCENAME, int FILE_SEQ_DQ, int LOG_SEQ, String FILE_NAME, String FILE_PATH, String CRWL_URL, int UID, int SITE_CODE,  String REG_DATE)    {
         ResultSet res = null;
 
         int returnCode =0;
@@ -324,7 +326,7 @@ public class FileDown {
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             pstmt = conn.prepareStatement(INSERT_SQL);
             pstmt.setLong(1, SEQ);
-            pstmt.setString(2, SITENAME);
+            pstmt.setString(2, BBS_ID);
             pstmt.setString(3, SOURCENAME);
             pstmt.setInt(4, FILE_SEQ_DQ);
             pstmt.setInt(5, LOG_SEQ);

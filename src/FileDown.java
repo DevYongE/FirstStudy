@@ -31,7 +31,7 @@ public class FileDown {
     static String OperType = "1"; //0: 운영 1: 개발
 
     public static void main(String[] args) {
-        String TYPE1 =  args[0];
+        String TYPE1 =  args[0]; // 게시판 아이디?
         getConnection();
         List<Map<String, String>> resultList = new ArrayList<>();
         System.out.println("[ 첨부파일 다운로드를 시작 합니다. ]");

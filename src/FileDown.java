@@ -31,7 +31,7 @@ public class FileDown {
     static String OperType = "1"; //0: 운영 1: 개발
 
     public static void main(String[] args) {
-        String TYPE1 =  args[0]; // 게시판 아이디?
+        String TYPE1 =  args[0]; // 게시판 bbs_id
         System.out.println(TYPE1);
         getConnection();
         List<Map<String, String>> resultList = new ArrayList<>();
@@ -91,13 +91,11 @@ public class FileDown {
                         finalRealPath = tempServerRealPath+file_code+"_"+Integer.toString(j+1)+".pdf";
 
                     }
-
-
                    // System.out.println("c:\\"+finalRealPath);
 //                    getFileDown(FILEURL_ARRAY[j], SITE_CODE, "D:\\crawling_data\\"+finalRealPath);
                     insertAttFile(CONTS_SEQ, TYPE1, SOURCENAME, file_seq, 0, originFile, finalPath, CRWL_URL, file_seq, SITE_CODE,REG_DATE );
                     //insertAttFile(CONTS_SEQ,String SITENAME, String SOURCENAME, int FILE_SEQ_DQ, int LOG_SEQ, String FILE_NAME, String FILE_PATH, String CRWL_URL, int UID, String SITE_CODE, String REG_DATE)
-                    getFileDown(FILEURL_ARRAY[j], SITE_CODE, "C:\\"+finalPath);
+                    getFileDown(FILEURL_ARRAY[j], "C:\\"+finalPath);
                     fos.close();
                     is.close();
                 }catch (Exception e) {
@@ -111,7 +109,6 @@ public class FileDown {
         }
     }
     private static String setFileChange(String oriName){
-
         return null;
     }
     private static String mkdirs(String directory) throws IOException, Exception {
@@ -139,7 +136,6 @@ public class FileDown {
 //            DBuser = "postgres";
 //            DBpw = "koiha123";
 //            DBurl = "jdbc:postgresql://211.45.203.237/postgres";
-
         try {
             DBuser = "postgres";
             DBpw = "1234";
@@ -215,7 +211,7 @@ public class FileDown {
         }
     }
 
-    public static void getFileDown(String file_url, int path_code, String filepath){
+    public static void getFileDown(String file_url, String filepath){
         try {
             URL url = new URL(file_url);
             System.out.println("File_URL====> "+file_url);

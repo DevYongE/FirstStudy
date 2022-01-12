@@ -32,12 +32,13 @@ public class FileDown {
 
     public static void main(String[] args) {
         String TYPE1 =  args[0]; // 게시판 아이디?
+        System.out.println(TYPE1);
         getConnection();
         List<Map<String, String>> resultList = new ArrayList<>();
         System.out.println("[ 첨부파일 다운로드를 시작 합니다. ]");
         resultList = getFileUrl(TYPE1);
         String serverPath = "scrapystore";
-        String dbSavePath = "share_files/kms";
+        String dbSavePath = "share_files\\kms";
         System.out.println("[ "+resultList.size()+" 첨부파일 ROW 수 ]");
 
         for(int i=0; resultList.size() > i ;i++){
@@ -62,7 +63,7 @@ public class FileDown {
                     int SITE_CODE = Integer.parseInt(resultMap.get("SITE_CODE"));
                     REG_DATE = resultMap.get("REG_DATE");
                     int file_seq = Integer.parseInt(resultMap.get("FILE_SEQ"));
-                    String tempServerPath = dbSavePath+"/"+SITE_CODE+"/";
+                    String tempServerPath = dbSavePath+"\\"+SITE_CODE+"\\";
                     String tempServerRealPath = serverPath+"\\"+SITE_CODE+"\\";
                     String FILEEX = "";		// 파일 확장자
                     //if(FILENM_TEMP.lastIndexOf(".") > 0)
@@ -88,17 +89,15 @@ public class FileDown {
                     }else{
                         finalPath = tempServerPath+file_code+"_"+Integer.toString(j+1)+".pdf";
                         finalRealPath = tempServerRealPath+file_code+"_"+Integer.toString(j+1)+".pdf";
+
                     }
 
 
                    // System.out.println("c:\\"+finalRealPath);
+//                    getFileDown(FILEURL_ARRAY[j], SITE_CODE, "D:\\crawling_data\\"+finalRealPath);
                     insertAttFile(CONTS_SEQ, TYPE1, SOURCENAME, file_seq, 0, originFile, finalPath, CRWL_URL, file_seq, SITE_CODE,REG_DATE );
                     //insertAttFile(CONTS_SEQ,String SITENAME, String SOURCENAME, int FILE_SEQ_DQ, int LOG_SEQ, String FILE_NAME, String FILE_PATH, String CRWL_URL, int UID, String SITE_CODE, String REG_DATE)
-
-                    System.out.println(FILEURL_ARRAY[j]);
-                    //getFileDown(FILEURL_ARRAY[j], site_code, "D:\\"+finalRealPath);
-                    getFileDown(FILEURL_ARRAY[j], SITE_CODE, "D:\\crawling_data\\"+finalRealPath);
-
+                    getFileDown(FILEURL_ARRAY[j], SITE_CODE, "C:\\"+finalPath);
                     fos.close();
                     is.close();
                 }catch (Exception e) {
@@ -155,7 +154,7 @@ public class FileDown {
         }
         return conn;
     }
-    public static List<Map<String, String>> getFileUrl(String TYPE2){
+    public static List<Map<String, String>> getFileUrl(String TYPE1){
         List<Map<String, String>> resultList = new ArrayList<Map<String, String>>();
         String SELECT_SQL = "";
         try{
@@ -163,7 +162,7 @@ public class FileDown {
             SELECT_SQL =
                     "SELECT UNIQUE_ID, BBS_ID ,CONTS_SEQ, CRWL_URL, SOURCENAME, FILE_SEQ, FILE_NAME, FILE_URL, REG_DATE, SITE_CODE FROM DQ_CRWL"
                             + " WHERE FILE_URL IS NOT NULL  AND FILE_NAME IS NOT NULL AND FILE_SEQ  NOT IN (SELECT FILE_SEQ FROM TBL_FILE) " +
-                            "AND BBS_ID ="+TYPE2;
+                            "AND BBS_ID =CAST("+TYPE1+"AS varchar(5))";
 
             ResultSet rs = stmt.executeQuery(SELECT_SQL);
             while(rs.next()){
@@ -326,7 +325,7 @@ public class FileDown {
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             pstmt = conn.prepareStatement(INSERT_SQL);
             pstmt.setLong(1, SEQ);
-            pstmt.setString(2, String.valueOf(Integer.parseInt(BBS_ID)));
+            pstmt.setString(2, BBS_ID);
             pstmt.setString(3, SOURCENAME);
             pstmt.setInt(4, FILE_SEQ_DQ);
             pstmt.setInt(5, LOG_SEQ);

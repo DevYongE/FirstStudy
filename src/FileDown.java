@@ -326,7 +326,7 @@ public class FileDown {
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             pstmt = conn.prepareStatement(INSERT_SQL);
             pstmt.setLong(1, SEQ);
-            pstmt.setString(2, BBS_ID);
+            pstmt.setString(2, String.valueOf(Integer.parseInt(BBS_ID)));
             pstmt.setString(3, SOURCENAME);
             pstmt.setInt(4, FILE_SEQ_DQ);
             pstmt.setInt(5, LOG_SEQ);

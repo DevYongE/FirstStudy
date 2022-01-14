@@ -31,7 +31,7 @@ public class FileDown {
     static String OperType = "1"; //0: 운영 1: 개발
 
     public static void main(String[] args) {
-        String TYPE1 =  args[0]; // 게시판 bbs_id
+        String TYPE1 =  "21"; // 게시판 bbs_id
         System.out.println(TYPE1);
         getConnection();
         List<Map<String, String>> resultList = new ArrayList<>();
@@ -51,7 +51,7 @@ public class FileDown {
             setFile(resultMap);
             String[] FILENM_ARRAY = filenm.replaceAll("\r", "").replaceAll(" ", "\n").replaceAll("\r\n", "\n").split("\n");
             String[] FILEURL_ARRAY = fileurl.replaceAll("\r", "").replaceAll(" ", "\n").replaceAll("\r\n", "\n").split("\n");
-            String site_code = resultList.get(i).get("SITE_CODE");
+//            String site_code = resultList.get(i).get("SITE_CODE");
             for(int j=0; j < FILEURL_ARRAY.length;j++){
                 try{
                     String originFile = getFileName(FILEURL_ARRAY[j], FILENM_ARRAY[j]);
@@ -63,8 +63,8 @@ public class FileDown {
                     int SITE_CODE = Integer.parseInt(resultMap.get("SITE_CODE"));
                     REG_DATE = resultMap.get("REG_DATE");
                     int file_seq = Integer.parseInt(resultMap.get("FILE_SEQ"));
-                    String tempServerPath = dbSavePath+"\\"+SITE_CODE+"\\";
-                    String tempServerRealPath = serverPath+"\\"+SITE_CODE+"\\";
+                    String tempServerPath = dbSavePath+"/"+SITE_CODE+"/";
+                    String tempServerRealPath = dbSavePath+"\\"+SITE_CODE+"\\";
                     String FILEEX = "";		// 파일 확장자
                     //if(FILENM_TEMP.lastIndexOf(".") > 0)
                     if(originFile.length() - originFile.lastIndexOf(".") < 6)
@@ -92,14 +92,20 @@ public class FileDown {
 
                     }
                    // System.out.println("c:\\"+finalRealPath);
-//                    getFileDown(FILEURL_ARRAY[j], SITE_CODE, "D:\\crawling_data\\"+finalRealPath);
+                    getFileDown(FILEURL_ARRAY[j], "C:\\"+finalPath);
+//                    getFileDown(FILEURL_ARRAY[j], "D:\\crawling_data\\"+finalRealPath);
                     insertAttFile(CONTS_SEQ, TYPE1, SOURCENAME, file_seq, 0, originFile, finalPath, CRWL_URL, file_seq, SITE_CODE,REG_DATE );
                     //insertAttFile(CONTS_SEQ,String SITENAME, String SOURCENAME, int FILE_SEQ_DQ, int LOG_SEQ, String FILE_NAME, String FILE_PATH, String CRWL_URL, int UID, String SITE_CODE, String REG_DATE)
-                    getFileDown(FILEURL_ARRAY[j], "C:\\"+finalPath);
+                    //getFileDown(FILEURL_ARRAY[j], "C:\\"+finalPath);
                     fos.close();
                     is.close();
                 }catch (Exception e) {
                     System.out.println("에러 메세지" + e.getMessage());
+                } finally {
+                    if ( rs != null ) try{rs.close();}catch(Exception e){}
+                    if ( stmt != null ) try{stmt.close();}catch(Exception e){}
+                    if ( conn != null ) try{conn.close();}catch(Exception e){}
+                    System.out.println("[Database 연결을 종료 ]");
                 }
             }
             System.out.println(filenm);
@@ -138,10 +144,11 @@ public class FileDown {
 //            DBurl = "jdbc:postgresql://211.45.203.237/postgres";
         try {
             DBuser = "postgres";
-            DBpw = "1234";
+            String devDBpw = "1234";
+            DBpw = "koiha123";
             DBurl = "jdbc:postgresql://127.0.0.1/postgres";
             Class.forName("org.postgresql.Driver");
-            conn = DriverManager.getConnection(DBurl, DBuser, DBpw);
+            conn = DriverManager.getConnection(DBurl, DBuser, devDBpw);
             System.out.println("==========> 연결 성공");
         } catch (SQLException | ClassNotFoundException e) {
             // TODO Auto-generated catch block
